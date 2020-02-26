@@ -1,11 +1,12 @@
 package main
 
 import (
+	"bufio"
+	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 )
 
@@ -20,10 +21,12 @@ func main() {
 	if *in != "" {
 		input = []byte(*in)
 	} else {
-		input, err = ioutil.ReadAll(os.Stdin)
-		if err != nil {
-			panic(err)
+		scanner := bufio.NewScanner(os.Stdin)
+		buf := bytes.NewBuffer(input)
+		for scanner.Scan() {
+			buf.Write(scanner.Bytes())
 		}
+		input = buf.Bytes()
 	}
 
 	// first attempt to base64 decode the input
